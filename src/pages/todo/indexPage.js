@@ -8,11 +8,11 @@ function IndexPage(props ) {
 
     const handleClickList = useCallback(() => {
         navigate({pathname:'list'})
-    },[])
+    },[navigate])
 
     const handleClickAdd = useCallback(() => {
         navigate({pathname:'add'})
-    },[])
+    },[navigate])
 
     return (
         <BasicLayout>
