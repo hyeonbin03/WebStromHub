@@ -37,12 +37,12 @@ const AddComponent = () => {
         setFetching(true);
 
         postAdd(formData).then(data => {
+
+            console.log("----after then--------------------------")
+            console.log(data)
+
             setFetching(false);
             setResult(data.result);
-            // Show next modal after 2 seconds
-            setTimeout(() => {
-                setResult(data.result);
-            }, 2000);
         });
     }
 
@@ -98,7 +98,7 @@ const AddComponent = () => {
                         ADD
                     </button>
                 </div>
-                {fetching ? <FetchingModal/> : null}
+                {fetching ? <FetchingModal/> : <></>}
             </div>
 
             {result ?
@@ -106,7 +106,7 @@ const AddComponent = () => {
                     title={"Product Add Result"}
                     content={`${result}번 상품 등록 완료`}
                     callbackFn={closeModal}
-                /> : null}
+                /> : <></>}
 
 
         </div>
