@@ -1,5 +1,8 @@
 import React, {useRef, useState} from 'react';
 import {postAdd} from "../../api/productsApi";
+import FetchingModal from "../common/FetchingModal";
+import ResultModal from "../common/ResultModal";
+import useCustomMove from "../../hooks/useCustomMove";
 
 const initState = {
     pname : '',
@@ -11,12 +14,14 @@ const initState = {
 // new FormData( ) -> 1. POST , 2. PUT
 
 
-function AddComponent(props) {
+const AddComponent = () => {
 
-    const [product, setProduct] = useState(initState)
+const [product, setProduct] = useState({...initState})
     const uploadRef = useRef()
+    const [fetching, setFetching] = useState(false)
+    const [result, setResult] = useState(null)
 
-
+    const {moveToList} = useCustomMove()
 
     const handleChangeProduct = (e) => {
 
@@ -46,12 +51,21 @@ function AddComponent(props) {
 
         console.log(formData)
 
-        postAdd(formData)
+        setFetching(true)
 
-
+        postAdd(formData).then(data => {
+            setFetching(false)
+            setResult(data.result)
+        })
     }
 
+    const closeModal = () => {
 
+        setResult(null)
+
+        moveToList({page:1})
+
+    }
     return (
         <div className="border-2 border-sky-200 mt-10 m-2 p-4">
             <div className="flex justify-center">
@@ -99,7 +113,19 @@ function AddComponent(props) {
                 </button>
             </div>
         </div>
+            <div className={" border-2 border-sky-200 mt-10 m-2 p-4"}> </div>
+            {fetching ? <FetchingModal/> : <></>}
+
+            {result ?
+                <ResultModal
+                    title={"Product Add Result"}
+                    content={`${result}번 상품 등록 완료`}
+                    callbackFn={closeModal}
+                >
+
+                </ResultModal> : <></>}
         </div>
+
     );
 
 }
