@@ -1,71 +1,56 @@
-import React, {useRef, useState} from 'react';
-import {postAdd} from "../../api/productsApi";
+import React, { useRef, useState } from 'react';
+import { postAdd } from "../../api/productsApi";
 import FetchingModal from "../common/FetchingModal";
 import ResultModal from "../common/ResultModal";
 import useCustomMove from "../../hooks/useCustomMove";
 
 const initState = {
-    pname : '',
-    pdesc : '',
-    price : 0,
+    pname: '',
+    pdesc: '',
+    price: 0,
     files: []
 }
 
-// new FormData( ) -> 1. POST , 2. PUT
-
-
 const AddComponent = () => {
-
-const [product, setProduct] = useState({...initState})
-    const uploadRef = useRef()
-    const [fetching, setFetching] = useState(false)
-    const [result, setResult] = useState(null)
-
-    const {moveToList} = useCustomMove()
+    const [product, setProduct] = useState({ ...initState });
+    const uploadRef = useRef();
+    const [fetching, setFetching] = useState(false);
+    const [result, setResult] = useState(false);
+    const { moveToList } = useCustomMove();
 
     const handleChangeProduct = (e) => {
-
-        product[e.target.name] = e.target.value
-
-        setProduct({...product})
-
+        setProduct({ ...product, [e.target.name]: e.target.value });
     }
 
     const handleClickAdd = (e) => {
+        const formData = new FormData();
+        const files = uploadRef.current.files;
 
-        console.log(product)
-
-        const formData = new FormData()
-
-        const files =  uploadRef.current.files
-
-        for(let i = 0; i < files.length; i++){
-
-            formData.append("files", files[i])
-
+        for (let i = 0; i < files.length; i++) {
+            formData.append("files", files[i]);
         }
 
-        formData.append("pname",product.pname)
-        formData.append("pdesc",product.pdesc)
-        formData.append("price",product.price)
+        formData.append("pname", product.pname);
+        formData.append("pdesc", product.pdesc);
+        formData.append("price", product.price);
 
-        console.log(formData)
-
-        setFetching(true)
+        setFetching(true);
 
         postAdd(formData).then(data => {
-            setFetching(false)
-            setResult(data.result)
-        })
+            setFetching(false);
+            setResult(data.result);
+            // Show next modal after 2 seconds
+            setTimeout(() => {
+                setResult(data.result);
+            }, 2000);
+        });
     }
 
     const closeModal = () => {
-
-        setResult(null)
-
-        moveToList({page:1})
-
+        setResult(false);
+        moveToList({ page: 1 });
     }
+
     return (
         <div className="border-2 border-sky-200 mt-10 m-2 p-4">
             <div className="flex justify-center">
@@ -104,29 +89,29 @@ const [product, setProduct] = useState({...initState})
                         type={'file'} multiple={true}>
                     </input>
                 </div>
-            </div><div className="flex justify-end">
-            <div className="relative mb-4 flex p-4 flex-wrap items-stretch">
-                <button type="button"
-                        className="rounded p-4 w-36 bg-blue-500 text-xl text-white "
-                        onClick={handleClickAdd} >
-                    ADD
-                </button>
             </div>
-        </div>
-            <div className={" border-2 border-sky-200 mt-10 m-2 p-4"}> </div>
-            {fetching ? <FetchingModal/> : <></>}
+            <div className="flex justify-end">
+                <div className="relative mb-4 flex p-4 flex-wrap items-stretch">
+                    <button type="button"
+                            className="rounded p-4 w-36 bg-blue-500 text-xl text-white "
+                            onClick={handleClickAdd} >
+                        ADD
+                    </button>
+                </div>
+                {fetching ? <FetchingModal/> : null}
+            </div>
 
             {result ?
                 <ResultModal
                     title={"Product Add Result"}
                     content={`${result}번 상품 등록 완료`}
                     callbackFn={closeModal}
-                >
+                /> : null}
 
-                </ResultModal> : <></>}
+
         </div>
 
     );
-
 }
+
 export default AddComponent;
