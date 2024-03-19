@@ -19,7 +19,7 @@ const ReadComponent = ({pno }) => {
     const [product, setProduct] = useState(initState)
 
     //화면 이동용 함수
-    const {moveToList, moveToModify} = useCustomMove()
+    const {moveToList, moveToModify,page,size} = useCustomMove()
 
     //fetching
     const [fetching, setFetching] = useState(false)
@@ -94,7 +94,7 @@ const ReadComponent = ({pno }) => {
                 </button>
                 <button type="button"
                         className="rounded p-4 m-2 text-xl w-32 text-white bg-blue-500"
-                        onClick={moveToList}
+                        onClick={() => moveToList({page,size})}
                 >
                     List
                 </button>
