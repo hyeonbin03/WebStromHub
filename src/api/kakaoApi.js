@@ -18,7 +18,7 @@ export const getKakaoLoginLink = () => {
 
 }
 
-export const getAccessToken = async (authCOde) => {
+export const getAccessToken = async (authCode) => {
 
     const header = {headers: {"Content-Type": "application/x-www-form-urlencoded;charset=uft-8"}}
 
@@ -26,7 +26,7 @@ export const getAccessToken = async (authCOde) => {
         grant_type:'authorization_code',
         client_id: rest_api_key,
         redirect_uri:redirect_uri,
-        code:authCOde
+        code:authCode
     }
 
     const res = await axios.post(access_token_url, params, header)
